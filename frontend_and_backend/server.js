@@ -40,7 +40,11 @@ app.post('/api/analyze', (req, res) => {
 
   // Validation
   if (!name || !specialization || hours === undefined) {
-    return res.status(400).json({ error: 'Please fill in all fields.' });
+  return res.status(400).json({ error: 'Please fill in all fields.' });
+}
+  const specArray = Array.isArray(specialization) ? specialization : [specialization];
+  if (specArray.length === 0 || specArray.length > 5) {
+    return res.status(400).json({ error: 'Please select between 1 and 5 specializations.' });
   }
   const h = parseFloat(hours);
   if (isNaN(h) || h < 0 || h > 168) {
@@ -49,7 +53,7 @@ app.post('/api/analyze', (req, res) => {
 
   // Simulated model delay
   setTimeout(() => {
-    const result = mockNeuralNetwork(name, specialization, h);
+    const result = mockNeuralNetwork(name, specArray, h);
     res.json(result);
   }, 1200);
 });
